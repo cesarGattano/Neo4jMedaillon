@@ -85,8 +85,6 @@ x-airflow-common: &airflow-common
     - neo4jmedaillon-network
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on: &airflow-common-depends-on
-    redis:
-      condition: service_healthy
     postgres:
       condition: service_healthy
 
@@ -281,9 +279,53 @@ services:
       _PIP_ADDITIONAL_REQUIREMENTS: ""
     user: "0:0"
 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Conteneur pour airflow en ligne de commande
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  airflow-cli:
+    <<: *airflow-common
+    profiles:
+      - debug
+    networks:
+      - neo4jmedaillon-network
+    environment:
+      <<: *airflow-common-env
+      CONNECTION_CHECK_MAX_COUNT: "0"
+    # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
+    command:
+      - bash
+      - -c
+      - airflow
+    depends_on:
+      <<: *airflow-common-depends-on
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Conteneur pour la base de données neo4j
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  neo4j:
+    container_name: neo4jmedaillon-neo4jdb
+    image: neo4j:5.26
+    ports:
+      - ${LOCAL_HTTP_PORT}:${NEO4J_HTTP_PORT}
+      - ${LOCAL_BOLT_PORT}:${NEO4J_BOLT_PORT}
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH:-none}
+    volumes:
+      - neo4jmedaillon-neo4jdata:/data
+    networks:
+      - neo4jmedaillon-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --spider localhost:7474 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
 networks:
   neo4jmedaillon-network:
     driver: bridge
 
 volumes:
   neo4jmedaillon-data:
+  neo4jmedaillon-neo4jdata:
