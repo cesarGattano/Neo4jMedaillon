@@ -168,6 +168,32 @@ gen_list_has_read(
         papers_pt_ids,
     ],
 )
+# Pollute edges
+my_dict = dict()
+my_dict["src"] = ''
+my_dict["dst"] = 48645
+my_dict["type"] = "Parasite1"
+edges.append(my_dict)
+my_dict = dict()
+my_dict["src"] = ''
+my_dict["dst"] = ''
+my_dict["type"] = "Parasite2"
+edges.append(my_dict)
+my_dict = dict()
+my_dict["src"] = 468464
+my_dict["dst"] = ''
+my_dict["type"] = "Parasite3"
+edges.append(my_dict)
+my_dict = dict()
+my_dict["src"] = ''
+my_dict["dst"] = 378385
+my_dict["type"] = "Parasite4"
+edges.append(my_dict)
+my_dict = dict()
+my_dict["src"] = ''
+my_dict["dst"] = 48645
+my_dict["type"] = "Parasite5"
+edges.append(my_dict)
 
 # Store in csv
 with open("data/raw/edges.csv", "w", newline="") as csvfile:

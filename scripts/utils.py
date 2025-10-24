@@ -82,6 +82,19 @@ def compl_nodes(nodes: list[dict], dicts_to_append: list[dict], label: str) -> N
     for my_dict in dicts_to_append:
         for id, name in my_dict.items():
             nodes.append({"id": id, "label": label, "name": name})
+
+            # Pollute the dataset
+            if id == 8374:
+                nodes.append({"id": id, "label": label, "name": "Parasite1"})
+            elif id == 248549:
+                nodes.append({"id": id, "label": label, "name": "Parasite2"})
+            elif id == 574643:
+                nodes.append({"id": id, "label": label, "name": "Parasite3"})
+            elif id == 621345:
+                nodes.append({"id": id, "label": label, "name": "Parasite4"})
+            elif id == 834564:
+                nodes.append({"id": id, "label": label, "name": "Parasite5"})
+
     return None
 
 
